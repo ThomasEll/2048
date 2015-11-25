@@ -26,6 +26,7 @@ import java.util.List;
 
 /**
  * @author Konstantin Bulenkov
+ * @author Tom Longdon
  */
 public class Game2048 extends JPanel {
   private static final Color BG_COLOR = new Color(0xbbada0);
@@ -43,13 +44,17 @@ public class Game2048 extends JPanel {
     addKeyListener(new KeyAdapter() {
       @Override
       public void keyPressed(KeyEvent e) {
+        //Resets game when escape is pressed
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
           resetGame();
         }
+
+        //If no more moves can be made set lose condition to true
         if (!canMove()) {
           myLose = true;
         }
 
+        //Switch statement for directional keys
         if (!myWin && !myLose) {
           switch (e.getKeyCode()) {
             case KeyEvent.VK_LEFT:
@@ -67,6 +72,7 @@ public class Game2048 extends JPanel {
           }
         }
 
+        //If win condition has not been met and no more moves can be made set lose condition to true
         if (!myWin && !canMove()) {
           myLose = true;
         }
@@ -77,6 +83,10 @@ public class Game2048 extends JPanel {
     resetGame();
   }
 
+  /**
+   * Resets the game, generating an array with a length of 16 to represent the 4x4 grid,
+   * and randomly places two new tiles.
+   */
   public void resetGame() {
     myScore = 0;
     myWin = false;
@@ -89,22 +99,33 @@ public class Game2048 extends JPanel {
     addTile();
   }
 
+  /**
+   * Called when the Left key is pressed. Iterates through each line and and calls the moveLine and mergeLine
+   * functions on them. Once the line has been changed, calls the setLine function to save the new line to the
+   * game board
+   */
   public void left() {
     boolean needAddTile = false;
     for (int i = 0; i < 4; i++) {
       Tile[] line = getLine(i);
       Tile[] merged = mergeLine(moveLine(line));
       setLine(i, merged);
+
+      //If needAddTile is still set to false and the line has changed set needAddTile to true.
       if (!needAddTile && !compare(line, merged)) {
         needAddTile = true;
       }
     }
 
+    //After all lines have been moved generate a new tile
     if (needAddTile) {
       addTile();
     }
   }
 
+  /**
+   * Called when the Right key is pressed. Calls the rotate function so that
+   */
   public void right() {
     myTiles = rotate(180);
     left();
@@ -123,10 +144,23 @@ public class Game2048 extends JPanel {
     myTiles = rotate(270);
   }
 
+  /**
+   * Gets the tile at a particular position in a particular line. Because all of the tiles are stored in a single
+   * array, x acts as a the position within a line, whilst y acts as the offset value to get that line within the
+   * array. For example (0,3) would represent the value at myTiles[12]
+   *
+   * @param x Position within line
+   * @param y Line number (0 top, 3 bottom)
+   * @return  The value of the tile
+   */
   private Tile tileAt(int x, int y) {
     return myTiles[x + y * 4];
   }
 
+  /**
+   * Generates a new tile in an empty space with a value of either 2 or 4. A Tile with a value of a 2 has a higher
+   * probability of being generated
+   */
   private void addTile() {
     List<Tile> list = availableSpace();
     if (!availableSpace().isEmpty()) {
@@ -136,6 +170,11 @@ public class Game2048 extends JPanel {
     }
   }
 
+  /**
+   * Generates the list of spaces that currently do not have a tile in them
+   *
+   * @return  The list of empty tiles
+   */
   private List<Tile> availableSpace() {
     final List<Tile> list = new ArrayList<Tile>(16);
     for (Tile t : myTiles) {
@@ -146,19 +185,31 @@ public class Game2048 extends JPanel {
     return list;
   }
 
+  /**
+   * Checks if the game board is full
+   *
+   * @return Boolean value, true if availableSpace's size is 0
+   */
   private boolean isFull() {
     return availableSpace().size() == 0;
   }
 
+  /**
+   * Checks if a move can be made on the current game board
+   *
+   * @return Boolean value, false if no more moves can be made
+   */
   boolean canMove() {
+    //If the game board isn't full then more moves can be made
     if (!isFull()) {
       return true;
     }
+    //Iterates through each tile and checks if any adjacent tile has the same value.
     for (int x = 0; x < 4; x++) {
       for (int y = 0; y < 4; y++) {
         Tile t = tileAt(x, y);
         if ((x < 3 && t.value == tileAt(x + 1, y).value)
-          || ((y < 3) && t.value == tileAt(x, y + 1).value)) {
+                || ((y < 3) && t.value == tileAt(x, y + 1).value)) {
           return true;
         }
       }
@@ -166,6 +217,14 @@ public class Game2048 extends JPanel {
     return false;
   }
 
+
+  /**
+   * Checks whether a line has had any values change
+   *
+   * @param line1 State of the line before the move was made
+   * @param line2 State of the line after the move was made
+   * @return Boolean value, false if a change has occurred
+   */
   private boolean compare(Tile[] line1, Tile[] line2) {
     if (line1 == line2) {
       return true;
@@ -181,6 +240,14 @@ public class Game2048 extends JPanel {
     return true;
   }
 
+
+  /**
+   * "Rotates" the tiles on the game board by a given number of degrees. This is done by shifting values in the
+   * tiles array to another position
+   *
+   * @param angle Number of degrees to "rotate" tiles by
+   * @return      Shifted tiles positions
+   */
   private Tile[] rotate(int angle) {
     Tile[] newTiles = new Tile[4 * 4];
     int offsetX = 3, offsetY = 3;
@@ -203,6 +270,12 @@ public class Game2048 extends JPanel {
     return newTiles;
   }
 
+  /**
+   * Moves values in a section of the tiles array to the first empty position. For example, [4,0,2,0] would become
+   * [4,2,0,0]
+   * @param oldLine   Current state of line
+   * @return          Updated state of line as array
+   */
   private Tile[] moveLine(Tile[] oldLine) {
     LinkedList<Tile> l = new LinkedList<Tile>();
     for (int i = 0; i < 4; i++) {
@@ -221,6 +294,13 @@ public class Game2048 extends JPanel {
     }
   }
 
+  /**
+   * Merges adjacent tiles in a line that have the same value, and then moves merged tiles into the first available
+   * space. This is done from the left, so if more than tile has the same value only one merge will happen.
+   * For example [2,2,2,0] will produce [4,2,0,0]
+   * @param oldLine   The line of tiles to be merged
+   * @return          The merged line
+   */
   private Tile[] mergeLine(Tile[] oldLine) {
     LinkedList<Tile> list = new LinkedList<Tile>();
     for (int i = 0; i < 4 && !oldLine[i].isEmpty(); i++) {
@@ -244,20 +324,40 @@ public class Game2048 extends JPanel {
     }
   }
 
+  /**
+   * Ensures that each line is the correct size once tiles have been merged. If a line is not the correct size then
+   * new (empty) tiles are added.
+   *
+   * @param l The line to be checked
+   * @param s The size that the line should be
+   */
   private static void ensureSize(java.util.List<Tile> l, int s) {
     while (l.size() != s) {
       l.add(new Tile());
     }
   }
 
+  /**
+   *Gets the tiles contained in a particular line
+   *
+   * @param index Corresponds with which line is to be accessed
+   * @return      Array of values in that line
+   */
   private Tile[] getLine(int index) {
     Tile[] result = new Tile[4];
     for (int i = 0; i < 4; i++) {
+
       result[i] = tileAt(i, index);
     }
     return result;
   }
 
+  /**
+   * Saves updated line values to myTiles
+   *
+   * @param index Offset to select line
+   * @param re    Temporary updated line to be saved
+   */
   private void setLine(int index, Tile[] re) {
     System.arraycopy(re, 0, myTiles, index * 4, 4);
   }
@@ -279,8 +379,8 @@ public class Game2048 extends JPanel {
     g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
     int value = tile.value;
-    int xOffset = offsetCoors(x);
-    int yOffset = offsetCoors(y);
+    int xOffset = offsetColors(x);
+    int yOffset = offsetColors(y);
     g.setColor(tile.getBackground());
     g.fillRoundRect(xOffset, yOffset, TILE_SIZE, TILE_SIZE, 14, 14);
     g.setColor(tile.getForeground());
@@ -320,7 +420,7 @@ public class Game2048 extends JPanel {
 
   }
 
-  private static int offsetCoors(int arg) {
+  private static int offsetColors(int arg) {
     return arg * (TILES_MARGIN + TILE_SIZE) + TILES_MARGIN;
   }
 
