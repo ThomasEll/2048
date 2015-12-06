@@ -18,9 +18,8 @@ package com.bulenkov.game2048;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Konstantin Bulenkov
@@ -37,61 +36,38 @@ public class Game2048 extends JPanel {
     public Game2048() {
         setFocusable(true);
         myGame = new Game2048Model();
-        addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                //Resets game when escape is pressed
-                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                    myGame.resetGame();
-                }
 
-                //Switch statement for random move generation
-                if (!myGame.getWin() && !myGame.getLose()) {
-                    if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-
-                        Random r = new Random();
-                        int move = r.nextInt(4);
-
-                        switch (move) {
-                            case 0:
-                                myGame.left();
-                                break;
-                            case 1:
-                                myGame.up();
-                                break;
-                            case 2:
-                                myGame.right();
-                                break;
-                            case 3:
-                                myGame.down();
-                                break;
-                        }
-
-                    }
-                }
-
-                //Switch statement for directional keys
-                if (!myGame.getWin() && !myGame.getLose()) {
-                    switch (e.getKeyCode()) {
-                        case KeyEvent.VK_LEFT:
-                            myGame.left();
-                            break;
-                        case KeyEvent.VK_RIGHT:
-                            myGame.right();
-                            break;
-                        case KeyEvent.VK_DOWN:
-                            myGame.down();
-                            break;
-                        case KeyEvent.VK_UP:
-                            myGame.up();
-                            break;
-                    }
-                }
-
-                repaint();
-            }
-        });
         myGame.resetGame();
+    }
+
+    public void runGame(){
+        while (!myGame.getWin() && !myGame.getLose()) {
+            Random r = new Random();
+            int move = r.nextInt(4);
+
+            switch (move) {
+                case 0:
+                    myGame.left();
+                    break;
+                case 1:
+                    myGame.up();
+                    break;
+                case 2:
+                    myGame.right();
+                    break;
+                case 3:
+                    myGame.down();
+                    break;
+            }
+
+            try {
+                TimeUnit.MILLISECONDS.sleep(100);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+            repaint();
+        }
     }
 
     @Override
@@ -163,9 +139,13 @@ public class Game2048 extends JPanel {
         game.setSize(340, 400);
         game.setResizable(false);
 
-        game.add(new Game2048());
+        Game2048 gamePanel = new Game2048();
+
+        game.add(gamePanel);
 
         game.setLocationRelativeTo(null);
         game.setVisible(true);
+
+        gamePanel.runGame();
     }
 }
