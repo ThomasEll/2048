@@ -27,29 +27,15 @@ public class Game2048 extends JPanel {
     public void runGame(){
         while (!myGame.getWin() && !myGame.getLose()) {
             ai = new AIController();
-            int move = ai.makeMove();
+            myGame = ai.makeMove(myGame);
 
-            switch (move) {
-                case 0:
-                    myGame.left();
-                    break;
-                case 1:
-                    myGame.up();
-                    break;
-                case 2:
-                    myGame.right();
-                    break;
-                case 3:
-                    myGame.down();
-                    break;
-            }
 
             /*
                 Delays each move by set number of milliseconds, this prevents all moves being made before the game
                 board has been painted for the first time.
              */
             try {
-                TimeUnit.MILLISECONDS.sleep(100);
+                TimeUnit.MILLISECONDS.sleep(300);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
