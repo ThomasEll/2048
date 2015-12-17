@@ -10,13 +10,30 @@ import java.util.List;
  */
 public class Game2048Model {
 
-    private Tile[] myTiles;
-    boolean myWin = false;
-    boolean myLose = false;
-    int myScore = 0;
+    private Tile[] tiles;
+    boolean win = false;
+    boolean lose = false;
+    int score = 0;
 
     public Game2048Model(){
         resetGame();
+    }
+
+    public Game2048Model(Game2048Model game2048Model){
+        tiles = new Tile[4 * 4];
+        copyGame(game2048Model);
+    }
+
+    public void copyGame(Game2048Model game2048Model){
+        this.score = game2048Model.getScore();
+        this.win = game2048Model.getWin();
+        this.lose = game2048Model.getLose();
+
+        Tile[] t = game2048Model.getTiles();
+
+        for(int i = 0; i < t.length; i++){
+            this.tiles[i] = new Tile(t[i].value);
+        }
     }
 
     /**
@@ -24,12 +41,12 @@ public class Game2048Model {
      * and randomly places two new tiles.
      */
     public void resetGame() {
-        myScore = 0;
-        myWin = false;
-        myLose = false;
-        myTiles = new Tile[4 * 4];
-        for (int i = 0; i < myTiles.length; i++) {
-            myTiles[i] = new Tile();
+        score = 0;
+        win = false;
+        lose = false;
+        tiles = new Tile[4 * 4];
+        for (int i = 0; i < tiles.length; i++) {
+            tiles[i] = new Tile();
         }
         addTile();
         addTile();
@@ -55,7 +72,7 @@ public class Game2048Model {
      */
     private List<Tile> availableSpace() {
         final List<Tile> list = new ArrayList<Tile>(16);
-        for (Tile t : myTiles) {
+        for (Tile t : tiles) {
             if (t.isEmpty()) {
                 list.add(t);
             }
@@ -94,9 +111,9 @@ public class Game2048Model {
      * correct position.
      */
     public void right() {
-        myTiles = rotate(180);
+        tiles = rotate(180);
         left();
-        myTiles = rotate(180);
+        tiles = rotate(180);
     }
 
     /**
@@ -106,9 +123,9 @@ public class Game2048Model {
      * correct position.
      */
     public void up() {
-        myTiles = rotate(270);
+        tiles = rotate(270);
         left();
-        myTiles = rotate(90);
+        tiles = rotate(90);
     }
 
     /**
@@ -118,9 +135,9 @@ public class Game2048Model {
      * correct position.
      */
     public void down() {
-        myTiles = rotate(90);
+        tiles = rotate(90);
         left();
-        myTiles = rotate(270);
+        tiles = rotate(270);
     }
 
     /**
@@ -245,10 +262,10 @@ public class Game2048Model {
             int num = oldLine[i].value;
             if (i < 3 && oldLine[i].value == oldLine[i + 1].value) {
                 num *= 2;
-                myScore += num;
+                score += num;
                 int ourTarget = 2048;
                 if (num == ourTarget) {
-                    myWin = true;
+                    win = true;
                 }
                 i++;
             }
@@ -291,37 +308,45 @@ public class Game2048Model {
     }
 
     /**
-     * Saves updated line values to myTiles
+     * Saves updated line values to tiles
      *
      * @param index Offset to select line
      * @param re    Temporary updated line to be saved
      */
     private void setLine(int index, Tile[] re) {
-        System.arraycopy(re, 0, myTiles, index * 4, 4);
+        System.arraycopy(re, 0, tiles, index * 4, 4);
     }
 
     /**
      * Gets the tile at a particular position in a particular line. Because all of the tiles are stored in a single
      * array, x acts as a the position within a line, whilst y acts as the offset value to get that line within the
-     * array. For example (0,3) would represent the value at myTiles[12]
+     * array. For example (0,3) would represent the value at tiles[12]
      *
      * @param x Position within line
      * @param y Line number (0 top, 3 bottom)
      * @return  The value of the tile
      */
     private Tile tileAt(int x, int y) {
-        return myTiles[x + y * 4];
+        return tiles[x + y * 4];
     }
 
     public boolean getWin(){
-        return myWin;
+        return win;
     }
 
     public boolean getLose(){
-        return !myWin && !canMove();
+        return !win && !canMove();
     }
 
     public Tile getTile(int x, int y){
-        return myTiles[x + y * 4];
+        return tiles[x + y * 4];
+    }
+
+    public int getScore(){
+        return score;
+    }
+
+    public Tile[] getTiles(){
+        return tiles;
     }
 }
