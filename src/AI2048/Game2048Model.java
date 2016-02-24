@@ -85,23 +85,26 @@ public class Game2048Model {
      * functions on them. Once the line has been changed, calls the setLine function to save the new line to the
      * game board
      */
-    public void left() {
-        boolean needAddTile = false;
+    public boolean left() {
+        boolean moveMade = false;
         for (int i = 0; i < 4; i++) {
             Tile[] line = getLine(i);
             Tile[] merged = mergeLine(moveLine(line));
             setLine(i, merged);
 
-            //If needAddTile is still set to false and the line has changed set needAddTile to true.
-            if (!needAddTile && !compare(line, merged)) {
-                needAddTile = true;
+            //If moveMade is still set to false and the line has changed set moveMade to true.
+            if (!moveMade && !compare(line, merged)) {
+                moveMade = true;
             }
         }
 
         //After all lines have been moved generate a new tile
-        if (needAddTile) {
+        if (moveMade) {
             addTile();
         }
+
+
+        return moveMade;
     }
 
     /**
@@ -110,10 +113,12 @@ public class Game2048Model {
      * Once those functions have been performed, the tiles are rotated a further 180 degrees to return them to their
      * correct position.
      */
-    public void right() {
+    public boolean right() {
         tiles = rotate(180);
-        left();
+        boolean moveMade = left();
         tiles = rotate(180);
+
+        return moveMade;
     }
 
     /**
@@ -122,10 +127,12 @@ public class Game2048Model {
      * Once those functions have been performed, the tiles are rotated a further 90 degrees to return them to their
      * correct position.
      */
-    public void up() {
+    public boolean up() {
         tiles = rotate(270);
-        left();
+        boolean moveMade = left();
         tiles = rotate(90);
+
+        return moveMade;
     }
 
     /**
@@ -134,10 +141,12 @@ public class Game2048Model {
      * Once those functions have been performed, the tiles are rotated a further 270 degrees to return them to their
      * correct position.
      */
-    public void down() {
+    public boolean down() {
         tiles = rotate(90);
-        left();
+        boolean moveMade = left();
         tiles = rotate(270);
+
+        return moveMade;
     }
 
     /**
