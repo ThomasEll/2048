@@ -89,13 +89,16 @@ public class AIController {
     private double evaluate(Game2048Model game2048Model){
         Tile[] tiles =  game2048Model.getTiles();
 
+        double monotonicityLeftRightScore = monotonicityLeftRight(tiles);
+        double monotonicityUpDownScore = monotonicityUpDown(tiles);
+
         double count = 0.0;
         for (Tile tile : tiles) {
             if (tile.isEmpty()) {
                 count++;
             }
         }
-        double countEval = count / 14.0;
+        double countEval = count * 2.7;
 
         double score = (double) game2048Model.getScore();
 
@@ -108,5 +111,44 @@ public class AIController {
         }
 
         return (4.0 * scoreEval) + countEval;
+    }
+
+    private double monotonicityLeftRight(Tile[] tiles){
+        double monotonicityLeft = 0.0;
+        double monotonicityRight = 0.0;
+
+        for(int y = 0; y < 4; y++){
+            for(int x = 0; x < 4; x++){
+                //Prevents array out of bounds errors
+                if (x > 0) {
+                    if(tiles[(x-1)+(y*4)].value >  tiles[x + y * 4].value){
+                        monotonicityLeft += tiles[(x-1)+(y*4)].value - tiles[x + y * 4].value;
+                    } else {
+                        monotonicityRight += tiles[x + y * 4].value - tiles[(x-1)+(y*4)].value;
+                    }
+                }
+            }
+        }
+        return Math.max(monotonicityLeft, monotonicityRight);
+    }
+
+    private double monotonicityUpDown(Tile[] tiles){
+        double monotonicityUp = 0.0;
+        double monotonicityDown = 0.0;
+
+        for(int x = 0; x < 4; x++){
+            for(int y = 0; y < 4; y++){
+                //Prevents array out of bounds errors
+                if(y > 0){
+                    if(tiles[(x + y * 4) - 4].value > tiles[(x + y * 4)].value){
+                        monotonicityUp += tiles[(x + y * 4) - 4].value - tiles[(x + y * 4)].value;
+                    } else {
+                        monotonicityDown += tiles[(x + y * 4)].value - tiles[(x + y * 4) - 4].value;
+                    }
+                }
+            }
+        }
+
+        return Math.max(monotonicityUp, monotonicityDown);
     }
 }
