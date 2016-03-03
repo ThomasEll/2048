@@ -1,7 +1,5 @@
 package AI2048;
 
-import java.util.Random;
-
 /**
  * @author Tom Longdon
  */
@@ -92,13 +90,15 @@ public class AIController {
         double monotonicityLeftRightScore = monotonicityLeftRight(tiles);
         double monotonicityUpDownScore = monotonicityUpDown(tiles);
 
+        double mergeScore = merges(tiles);
+
         double count = 0.0;
         for (Tile tile : tiles) {
             if (tile.isEmpty()) {
                 count++;
             }
         }
-        double countEval = count * 2.7;
+        double countEval = count / 14.0;
 
         double score = (double) game2048Model.getScore();
 
@@ -110,7 +110,7 @@ public class AIController {
             scoreEval = 0.0;
         }
 
-        return (4.0 * scoreEval) + countEval;
+        return (4.0 * scoreEval) + countEval + mergeScore;
     }
 
     private double monotonicityLeftRight(Tile[] tiles){
@@ -121,10 +121,12 @@ public class AIController {
             for(int x = 0; x < 4; x++){
                 //Prevents array out of bounds errors
                 if (x > 0) {
-                    if(tiles[(x-1)+(y*4)].value >  tiles[x + y * 4].value){
-                        monotonicityLeft += tiles[(x-1)+(y*4)].value - tiles[x + y * 4].value;
+                    int previous = tiles[(x - 1) + (y * 4)].value;
+                    int current = tiles[x + y * 4].value;
+                    if(previous > current){
+                        monotonicityLeft += previous - current;
                     } else {
-                        monotonicityRight += tiles[x + y * 4].value - tiles[(x-1)+(y*4)].value;
+                        monotonicityRight += current - previous;
                     }
                 }
             }
@@ -140,15 +142,43 @@ public class AIController {
             for(int y = 0; y < 4; y++){
                 //Prevents array out of bounds errors
                 if(y > 0){
-                    if(tiles[(x + y * 4) - 4].value > tiles[(x + y * 4)].value){
-                        monotonicityUp += tiles[(x + y * 4) - 4].value - tiles[(x + y * 4)].value;
+                    int previous = tiles[(x + y * 4) - 4].value;
+                    int current = tiles[(x + y * 4)].value;
+                    if(previous > current){
+                        monotonicityUp += previous - current;
                     } else {
-                        monotonicityDown += tiles[(x + y * 4)].value - tiles[(x + y * 4) - 4].value;
+                        monotonicityDown += current - previous;
                     }
                 }
             }
         }
 
         return Math.max(monotonicityUp, monotonicityDown);
+    }
+
+    private double merges(Tile[] tiles){
+        double mergeCount = 0.0;
+
+        for(int i = 0; i < tiles.length; i++){
+            int current = tiles[i].value;
+
+            if(i-4 >= 0)
+                if (current == tiles[i - 4].value)
+                    mergeCount++;
+
+            if(i-1 >= 0 && (i%4 != 0))
+                if (current == tiles[i - 1].value)
+                    mergeCount++;
+
+            if(i+1 <= 15 && (i%4 != 3))
+                if (current == tiles[i + 1].value)
+                    mergeCount++;
+
+            if(i+4 <= 15)
+                if (current == tiles[i+4].value)
+                    mergeCount++;
+        }
+
+        return mergeCount;
     }
 }

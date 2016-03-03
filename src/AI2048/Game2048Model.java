@@ -250,7 +250,7 @@ public class Game2048Model {
             return oldLine;
         } else {
             Tile[] newLine = new Tile[4];
-            ensureSize(l, 4);
+            ensureSize(l);
             for (int i = 0; i < 4; i++) {
                 newLine[i] = l.removeFirst();
             }
@@ -283,7 +283,7 @@ public class Game2048Model {
         if (list.size() == 0) {
             return oldLine;
         } else {
-            ensureSize(list, 4);
+            ensureSize(list);
             return list.toArray(new Tile[4]);
         }
     }
@@ -293,10 +293,9 @@ public class Game2048Model {
      * new (empty) tiles are added.
      *
      * @param l The line to be checked
-     * @param s The size that the line should be
      */
-    private static void ensureSize(java.util.List<Tile> l, int s) {
-        while (l.size() != s) {
+    private static void ensureSize(java.util.List<Tile> l) {
+        while (l.size() != 4) {
             l.add(new Tile());
         }
     }
