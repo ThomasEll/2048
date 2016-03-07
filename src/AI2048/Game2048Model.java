@@ -56,7 +56,7 @@ public class Game2048Model {
      * Generates a new tile in an empty space with a value of either 2 or 4. A Tile with a value of a 2 has a higher
      * probability of being generated
      */
-    private void addTile() {
+    public void addTile() {
         List<Tile> list = availableSpace();
         if (!availableSpace().isEmpty()) {
             int index = (int) (Math.random() * list.size()) % list.size();
@@ -97,13 +97,6 @@ public class Game2048Model {
                 moveMade = true;
             }
         }
-
-        //After all lines have been moved generate a new tile
-        if (moveMade) {
-            addTile();
-        }
-
-
         return moveMade;
     }
 

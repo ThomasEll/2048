@@ -98,7 +98,7 @@ public class AIController {
                 count++;
             }
         }
-        double countEval = count / 14.0;
+        double countEval = count;
 
         double score = (double) game2048Model.getScore();
 
