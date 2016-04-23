@@ -35,12 +35,23 @@ public class Game2048 extends JPanel {
                 board has been painted for the first time.
              */
             try {
-                TimeUnit.MILLISECONDS.sleep(300);
+                TimeUnit.MILLISECONDS.sleep(30);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
 
             repaint();
+
+            //Debugging
+            /*Tile[] gameTiles = myGame.getTiles();
+            for(int i = 0; i < gameTiles.length; i++){
+                if(i % 4 == 0){
+                    System.out.println();
+                }
+                System.out.print(gameTiles[i].value + "|");
+            }
+            System.out.println();
+            System.out.println("______________");*/
         }
     }
 
