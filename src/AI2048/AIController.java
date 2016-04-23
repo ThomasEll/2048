@@ -27,25 +27,25 @@ public class AIController {
         if(movedLeft){
             leftEval = evaluate(gameLeft);
         } else {
-            leftEval = -1.0;
+            leftEval = Double.NEGATIVE_INFINITY;
         }
 
         if(movedRight){
             rightEval = evaluate(gameRight);
         } else {
-            rightEval = -1.0;
+            rightEval = Double.NEGATIVE_INFINITY;
         }
 
         if(movedUp){
             upEval = evaluate(gameUp);
         } else {
-            upEval = -1.0;
+            upEval = Double.NEGATIVE_INFINITY;
         }
 
         if(movedDown){
             downEval = evaluate(gameDown);
         } else {
-            downEval = -1.0;
+            downEval = Double.NEGATIVE_INFINITY;
         }
 
 
@@ -110,7 +110,7 @@ public class AIController {
             scoreEval = 0.0;
         }
 
-        return (4.0 * scoreEval) + countEval + mergeScore;
+        return (4.0 * scoreEval) + countEval + mergeScore - monotonicityLeftRightScore - monotonicityUpDownScore;
     }
 
     private double monotonicityLeftRight(Tile[] tiles){
@@ -121,8 +121,8 @@ public class AIController {
             for(int x = 0; x < 4; x++){
                 //Prevents array out of bounds errors
                 if (x > 0) {
-                    int previous = tiles[(x - 1) + (y * 4)].value;
-                    int current = tiles[x + y * 4].value;
+                    double previous = (tiles[(x - 1) + (y * 4)].value != 0) ? Math.log(tiles[(x - 1) + (y * 4)].value) / Math.log(2) : 0;
+                    double current = (tiles[x + y * 4].value != 0) ? Math.log(tiles[x + y * 4].value) / Math.log(2) : 0;
                     if(previous > current){
                         monotonicityLeft += previous - current;
                     } else {
@@ -131,7 +131,7 @@ public class AIController {
                 }
             }
         }
-        return Math.max(monotonicityLeft, monotonicityRight);
+        return Math.min(monotonicityLeft, monotonicityRight);
     }
 
     private double monotonicityUpDown(Tile[] tiles){
@@ -142,8 +142,8 @@ public class AIController {
             for(int y = 0; y < 4; y++){
                 //Prevents array out of bounds errors
                 if(y > 0){
-                    int previous = tiles[(x + y * 4) - 4].value;
-                    int current = tiles[(x + y * 4)].value;
+                    double previous = (tiles[(x + y * 4) - 4].value != 0) ? Math.log(tiles[(x + y * 4) - 4].value) / Math.log(2) : 0;
+                    double current = (tiles[(x + y * 4)].value != 0) ? Math.log(tiles[(x + y * 4)].value) / Math.log(2) : 0;
                     if(previous > current){
                         monotonicityUp += previous - current;
                     } else {
@@ -153,7 +153,7 @@ public class AIController {
             }
         }
 
-        return Math.max(monotonicityUp, monotonicityDown);
+        return Math.min(monotonicityUp, monotonicityDown);
     }
 
     private double merges(Tile[] tiles){

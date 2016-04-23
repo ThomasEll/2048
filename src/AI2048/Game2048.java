@@ -28,19 +28,30 @@ public class Game2048 extends JPanel {
         while (!myGame.getWin() && !myGame.getLose()) {
             ai = new AIController();
             myGame = ai.makeMove(myGame);
-            myGame.addTile();
+
 
             /*
                 Delays each move by set number of milliseconds, this prevents all moves being made before the game
                 board has been painted for the first time.
              */
             try {
-                TimeUnit.MILLISECONDS.sleep(50);
+                TimeUnit.MILLISECONDS.sleep(30);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
 
             repaint();
+
+            //Debugging
+            /*Tile[] gameTiles = myGame.getTiles();
+            for(int i = 0; i < gameTiles.length; i++){
+                if(i % 4 == 0){
+                    System.out.println();
+                }
+                System.out.print(gameTiles[i].value + "|");
+            }
+            System.out.println();
+            System.out.println("______________");*/
         }
     }
 
