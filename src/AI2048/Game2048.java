@@ -35,7 +35,7 @@ public class Game2048 extends JPanel {
                 board has been painted for the first time.
              */
             try {
-                TimeUnit.MILLISECONDS.sleep(30);
+                TimeUnit.MILLISECONDS.sleep(60);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }

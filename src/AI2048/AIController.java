@@ -100,17 +100,9 @@ public class AIController {
         }
         double countEval = count;
 
-        double score = (double) game2048Model.getScore();
+        int largestTile = largestTile(tiles);
 
-
-        double scoreEval;
-        if (score != 0.0) {
-            scoreEval = 1.0 - (1.0 / score);
-        } else {
-            scoreEval = 0.0;
-        }
-
-        return (4.0 * scoreEval) + countEval + mergeScore - monotonicityLeftRightScore - monotonicityUpDownScore;
+        return largestTile + countEval + mergeScore*2 - monotonicityLeftRightScore - monotonicityUpDownScore;
     }
 
     private double monotonicityLeftRight(Tile[] tiles){
@@ -180,5 +172,15 @@ public class AIController {
         }
 
         return mergeCount;
+    }
+
+    private int largestTile(Tile[] tiles){
+        int largestTile = 0;
+
+        for (Tile tile : tiles)
+            if (tile.value > largestTile)
+                largestTile = tile.value;
+
+        return largestTile;
     }
 }
