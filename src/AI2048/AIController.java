@@ -18,9 +18,6 @@ public class AIController {
         boolean movedUp = gameUp.up();
         boolean movedDown = gameDown.down();
 
-        /*if(!moved)
-            System.out.println("no move made");*/
-
         double bestEvaluation, leftEval, rightEval, upEval, downEval;
         int bestMove;
 
@@ -102,7 +99,9 @@ public class AIController {
 
         int largestTile = largestTile(tiles);
 
-        return largestTile + countEval + mergeScore*2 - monotonicityLeftRightScore - monotonicityUpDownScore;
+        int checkCorners = checkCorners(tiles);
+
+        return largestTile + checkCorners + countEval*1000 + mergeScore*2 - monotonicityLeftRightScore - monotonicityUpDownScore;
     }
 
     private double monotonicityLeftRight(Tile[] tiles){
@@ -174,6 +173,11 @@ public class AIController {
         return mergeCount;
     }
 
+    /**
+     *
+     * @param tiles
+     * @return
+     */
     private int largestTile(Tile[] tiles){
         int largestTile = 0;
 
@@ -182,5 +186,30 @@ public class AIController {
                 largestTile = tile.value;
 
         return largestTile;
+    }
+
+    /**
+     * Checks to see if the tile with the largest value is placed in a corner
+     * @param tiles
+     * @return
+     */
+    private int checkCorners(Tile[] tiles){
+        int largestTile = 0;
+
+        //Board corners are held in the array positions 0, 3, 12, 15
+        int topLeft = tiles[0].value;
+        int topRight = tiles[3].value;
+        int bottomLeft = tiles[12].value;
+        int bottomRight = tiles[15].value;
+
+        for (Tile tile : tiles)
+            if (tile.value > largestTile)
+                largestTile = tile.value;
+
+        if(largestTile == topLeft || largestTile == topRight || largestTile == bottomLeft || largestTile == bottomRight){
+            return largestTile;
+        } else {
+            return 0;
+        }
     }
 }
