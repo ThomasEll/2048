@@ -13,6 +13,7 @@ public class Tile {
         this(0);
     }
 
+
     public Tile(int num) {
         value = num;
     }

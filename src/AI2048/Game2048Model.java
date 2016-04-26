@@ -12,22 +12,31 @@ public class Game2048Model {
 
     private Tile[] tiles;
     boolean win = false;
-    boolean lose = false;
     int score = 0;
 
+    /**
+     * Creates a new blank gameboard
+     */
     public Game2048Model(){
         resetGame();
     }
 
+    /**
+     * Creates a new game board that is a replication on an existing gameboard
+     * @param game2048Model The gameboard to be replicated
+     */
     public Game2048Model(Game2048Model game2048Model){
         tiles = new Tile[4 * 4];
         copyGame(game2048Model);
     }
 
+    /**
+     * Copies the tiles from a gameboard to the new gameboard
+     * @param game2048Model The gameboard to be copied
+     */
     public void copyGame(Game2048Model game2048Model){
         this.score = game2048Model.getScore();
         this.win = game2048Model.getWin();
-        this.lose = game2048Model.getLose();
 
         Tile[] t = game2048Model.getTiles();
 
@@ -43,7 +52,6 @@ public class Game2048Model {
     public void resetGame() {
         score = 0;
         win = false;
-        lose = false;
         tiles = new Tile[4 * 4];
         for (int i = 0; i < tiles.length; i++) {
             tiles[i] = new Tile();
@@ -56,7 +64,7 @@ public class Game2048Model {
      * Generates a new tile in an empty space with a value of either 2 or 4. A Tile with a value of a 2 has a higher
      * probability of being generated
      */
-    public void addTile() {
+    private void addTile() {
         List<Tile> list = availableSpace();
         if (!availableSpace().isEmpty()) {
             int index = (int) (Math.random() * list.size()) % list.size();
@@ -97,6 +105,13 @@ public class Game2048Model {
                 moveMade = true;
             }
         }
+
+        //After all lines have been moved generate a new tile
+        if (moveMade) {
+            addTile();
+        }
+
+
         return moveMade;
     }
 
@@ -164,9 +179,9 @@ public class Game2048Model {
         //Iterates through each tile and checks if any adjacent tile has the same value.
         for (int x = 0; x < 4; x++) {
             for (int y = 0; y < 4; y++) {
-                Tile t = tileAt(x, y);
-                if ((x < 3 && t.value == tileAt(x + 1, y).value)
-                        || ((y < 3) && t.value == tileAt(x, y + 1).value)) {
+                Tile t = getTile(x, y);
+                if ((x < 3 && t.value == getTile(x + 1, y).value)
+                        || ((y < 3) && t.value == getTile(x, y + 1).value)) {
                     return true;
                 }
             }
@@ -199,8 +214,9 @@ public class Game2048Model {
 
 
     /**
-     * "Rotates" the tiles on the game board by a given number of degrees. This is done by shifting values in the
-     * tiles array to another position
+     * "Rotates" the tiles on the game board by a given number of degrees.
+     *
+     * This is done by shifting values in thetiles array to another position
      *
      * @param angle Number of degrees to "rotate" tiles by
      * @return      Shifted tiles positions
@@ -221,7 +237,7 @@ public class Game2048Model {
             for (int y = 0; y < 4; y++) {
                 int newX = (x * cos) - (y * sin) + offsetX;
                 int newY = (x * sin) + (y * cos) + offsetY;
-                newTiles[(newX) + (newY) * 4] = tileAt(x, y);
+                newTiles[(newX) + (newY) * 4] = getTile(x, y);
             }
         }
         return newTiles;
@@ -253,7 +269,9 @@ public class Game2048Model {
 
     /**
      * Merges adjacent tiles in a line that have the same value, and then moves merged tiles into the first available
-     * space. This is done from the left, so if more than tile has the same value only one merge will happen.
+     * space.
+     *
+     * This is done from the left, so if more than tile has the same value only one merge will happen.
      * For example [2,2,2,0] will produce [4,2,0,0]
      * @param oldLine   The line of tiles to be merged
      * @return          The merged line
@@ -303,7 +321,7 @@ public class Game2048Model {
         Tile[] result = new Tile[4];
         for (int i = 0; i < 4; i++) {
 
-            result[i] = tileAt(i, index);
+            result[i] = getTile(i, index);
         }
         return result;
     }
@@ -318,6 +336,16 @@ public class Game2048Model {
         System.arraycopy(re, 0, tiles, index * 4, 4);
     }
 
+    /** @return whether the game has been won*/
+    public boolean getWin(){
+        return win;
+    }
+
+    /** @return whether the game has been lost*/
+    public boolean getLose(){
+        return !win && !canMove();
+    }
+
     /**
      * Gets the tile at a particular position in a particular line. Because all of the tiles are stored in a single
      * array, x acts as a the position within a line, whilst y acts as the offset value to get that line within the
@@ -327,26 +355,18 @@ public class Game2048Model {
      * @param y Line number (0 top, 3 bottom)
      * @return  The value of the tile
      */
-    private Tile tileAt(int x, int y) {
-        return tiles[x + y * 4];
-    }
-
-    public boolean getWin(){
-        return win;
-    }
-
-    public boolean getLose(){
-        return !win && !canMove();
-    }
-
     public Tile getTile(int x, int y){
         return tiles[x + y * 4];
     }
 
+    /** @return the current game score */
     public int getScore(){
         return score;
     }
 
+    /**
+     * @return All of the tiles on the gameboard
+     */
     public Tile[] getTiles(){
         return tiles;
     }

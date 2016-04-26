@@ -11,8 +11,8 @@ import java.util.concurrent.TimeUnit;
 public class Game2048 extends JPanel {
     private static final Color BG_COLOR = new Color(0xbbada0);
     private static final String FONT_NAME = "Arial";
-    private static final int TILE_SIZE = 64;
-    private static final int TILES_MARGIN = 16;
+    private static final int TILE_SIZE = 64; //Pixel size of each tile
+    private static final int TILES_MARGIN = 16; //Pixel size of the gap between each tile
 
     private Game2048Model myGame;
     private AIController ai;
@@ -67,6 +67,7 @@ public class Game2048 extends JPanel {
         }
     }
 
+
     private void drawTile(Graphics g2, Tile tile, int x, int y) {
         Graphics2D g = ((Graphics2D) g2);
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -113,9 +114,15 @@ public class Game2048 extends JPanel {
 
     }
 
+    /**
+     * Calculates the offset value for a new tile
+     * @param arg Either the X or Y position of the tile to be offset
+     * @return The offset value
+     */
     private static int offsetColors(int arg) {
         return arg * (TILES_MARGIN + TILE_SIZE) + TILES_MARGIN;
     }
+
 
     public static void main(String[] args) {
         JFrame game = new JFrame();
