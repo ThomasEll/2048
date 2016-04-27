@@ -89,9 +89,12 @@ public class Game2048Model {
     }
 
     /**
-     * Called when the Left key is pressed. Iterates through each line and and calls the moveLine and mergeLine
-     * functions on them. Once the line has been changed, calls the setLine function to save the new line to the
-     * game board
+     * Used whenever a move is to be made.
+     *
+     * Iterates through each line and and calls the moveLine and mergeLine functions on them. Once the line has been
+     * changed, calls the setLine function to save the new line to the game board.
+     *
+     * @return whether a move has been made
      */
     public boolean left() {
         boolean moveMade = false;
@@ -116,10 +119,13 @@ public class Game2048Model {
     }
 
     /**
-     * Called when the Right key is pressed. Calls the rotate function so that the tiles are rotated 180 degrees (This
-     * would leave a tile in (0,0) at position (3,3). This allows to code for moving and merging lines to be reused.
-     * Once those functions have been performed, the tiles are rotated a further 180 degrees to return them to their
-     * correct position.
+     * Called whenever a Right move is to be made.
+     *
+     * Calls the rotate function so that the tiles are rotated 180 degrees (This would leave a tile in (0,0) at
+     * position (3,3). This allows to code for moving and merging lines to be reused. Once those functions have been
+     * performed, the tiles are rotated a further 180 degrees to return them to their correct position.
+     *
+     * @return whether a move has been made
      */
     public boolean right() {
         tiles = rotate(180);
@@ -130,10 +136,13 @@ public class Game2048Model {
     }
 
     /**
-     * Called when the Up key is pressed. Calls the rotate function so that the tiles are rotated 270 degrees (This
-     * would leave a tile in (0,0) at position (3,0). This allows to code for moving and merging lines to be reused.
-     * Once those functions have been performed, the tiles are rotated a further 90 degrees to return them to their
-     * correct position.
+     * Called whenever an Up move is to be made.
+     *
+     * Calls the rotate function so that the tiles are rotated 270 degrees (This would leave a tile in (0,0) at
+     * position (3,0). This allows to code for moving and merging lines to be reused. Once those functions have been
+     * performed, the tiles are rotated a further 90 degrees to return them to their correct position.
+     *
+     * @return whether a move has been made
      */
     public boolean up() {
         tiles = rotate(270);
@@ -144,10 +153,13 @@ public class Game2048Model {
     }
 
     /**
-     * Called when the Right key is pressed. Calls the rotate function so that the tiles are rotated 90 degrees (This
-     * would leave a tile in (0,0) at position (0,3). This allows to code for moving and merging lines to be reused.
-     * Once those functions have been performed, the tiles are rotated a further 270 degrees to return them to their
-     * correct position.
+     * Called whenever a Down move is to be made.
+     *
+     * Calls the rotate function so that the tiles are rotated 90 degrees (This would leave a tile in (0,0) at position
+     * (0,3). This allows to code for moving and merging lines to be reused. Once those functions have been performed,
+     * the tiles are rotated a further 270 degrees to return them to their correct position.
+     *
+     * @return whether a move has been made
      */
     public boolean down() {
         tiles = rotate(90);
