@@ -7,6 +7,8 @@ import java.util.List;
  */
 public class AIController {
 
+
+
     /**
      * Makes all possible moves and evaluates which is the best
      * @param myGame The game board to make moves on
@@ -115,6 +117,8 @@ public class AIController {
         int emptyCount = getEmptyCount(tiles);
 
         int largestTile = largestTile(tiles);
+        int winScore = 0;
+        if(largestTile == 2048) winScore = 100000000; //If a move gets the 2048 tile then that should be taken
 
         int score = game2048Model.getScore();
 
@@ -122,7 +126,8 @@ public class AIController {
 
         int adjacencyScore = adjacencyScore(tiles);
 
-        return largestTile + score + cornerScore*3 + adjacencyScore*2 + emptyCount + mergeCount*2 - monotonicityLeftRightScore*2 - monotonicityUpDownScore*2;
+        return winScore + score + cornerScore*3 + adjacencyScore*2 + emptyCount + mergeCount*2
+                - monotonicityLeftRightScore*2 - monotonicityUpDownScore*2;
     }
 
     /**

@@ -30,6 +30,14 @@ public class Game2048Model {
         copyGame(game2048Model);
     }
 
+    public Game2048Model(int[] tileValues){
+        tiles = new Tile[4 * 4];
+
+        for (int i = 0; i < tileValues.length; i++){
+            tiles[i] = new Tile(tileValues[i]);
+        }
+    }
+
     /**
      * Copies the tiles from a gameboard to the new gameboard
      * @param game2048Model The gameboard to be copied
@@ -64,7 +72,7 @@ public class Game2048Model {
      * Generates a new tile in an empty space with a value of either 2 or 4. A Tile with a value of a 2 has a higher
      * probability of being generated
      */
-    private void addTile() {
+    public void addTile() {
         List<Tile> list = availableSpace();
         if (!availableSpace().isEmpty()) {
             int index = (int) (Math.random() * list.size()) % list.size();
@@ -109,10 +117,7 @@ public class Game2048Model {
             }
         }
 
-        //After all lines have been moved generate a new tile
-        if (moveMade) {
-            addTile();
-        }
+
 
 
         return moveMade;

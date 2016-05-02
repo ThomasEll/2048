@@ -29,6 +29,7 @@ public class Game2048 extends JPanel {
             ai = new AIController();
             myGame = ai.makeMove(myGame);
 
+            myGame.addTile();
 
             /*
                 Delays each move by set number of milliseconds, this prevents all moves being made before the game
