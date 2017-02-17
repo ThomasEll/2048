@@ -25,12 +25,18 @@ public class Game2048 extends JPanel {
     }
 
     public void runGame(){
+
+        /*long startTime = System.currentTimeMillis();
+
+        int moveCount = 0;*/
+
         while (!myGame.getWin() && !myGame.getLose()) {
             ai = new AIController();
             myGame = ai.makeMove(myGame);
 
             myGame.addTile();
 
+            //moveCount++;
             /*
                 Delays each move by set number of milliseconds, this prevents all moves being made before the game
                 board has been painted for the first time.
@@ -54,6 +60,12 @@ public class Game2048 extends JPanel {
             System.out.println();
             System.out.println("______________");*/
         }
+
+        //long endTime = System.currentTimeMillis();
+
+        /*System.out.println("Total moves: " + moveCount);
+        System.out.println("Total time taken: " + (endTime-startTime) + "ms");
+        System.out.println("Average time per move: " + (((double)(endTime-startTime))/moveCount) + "ms");*/
     }
 
     @Override
